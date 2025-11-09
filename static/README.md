@@ -30,6 +30,6 @@ git clone https://github.com/<your-username>/phishing-detector.git
 cd phishing-detector
     
     
-git remote add origin https://github.com/<Vatshal27>/phishing-detector.git
 git branch -M main
+git remote add origin https://github.com/<Vatshal27>/Phishing-Url-Detection-Using-ML.git
 git push -u origin main
