@@ -1,0 +1,13 @@
+
+flask
+
+joblib
+
+pandas
+
+numpy
+
+tldextract
+
+scikit-learn
+

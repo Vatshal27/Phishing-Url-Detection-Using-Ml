@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scan Results - Phishing URL Detector</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <!-- Background Effects -->
+  <div class="background">
+    <div class="glow"></div>
+    <div class="glow"></div>
+    <div class="glow"></div>
+  </div>
+
+  <!-- Theme Toggle Button -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+    <svg class="moon-icon hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+
+  <!-- Main Container -->
+  <div class="container">
+    <div class="header">
+      <div class="icon-wrapper">
+        <span class="icon" id="resultIcon">🛡️</span>
+      </div>
+      <h1 class="title">Scan Results</h1>
+    </div>
+
+    <!-- Dynamic Result Card -->
+    <div class="result-card {{ 'danger' if label == 'Phishing' else 'success' }}">
+      <div class="result-header">
+        {% if label == 'Phishing' %}
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="result-icon">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="15" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+          <h2>⚠️ Phishing Detected</h2>
+          <p class="result-description danger-text">
+            <strong>Warning!</strong> This URL shows characteristics of a phishing attempt.
+          </p>
+        {% else %}
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="result-icon">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <h2>✅ Safe URL</h2>
+          <p class="result-description">
+            This URL appears to be legitimate and safe to visit.
+          </p>
+        {% endif %}
+      </div>
+
+      <div class="url-display">
+        <div class="url-label">Scanned URL:</div>
+        <div class="url">{{ url }}</div>
+      </div>
+
+      <!-- Confidence Section -->
+      <div class="confidence-section">
+        <div class="confidence-label">Confidence Score</div>
+
+        <div class="confidence-bar {% if label == 'Phishing' %}danger-bar{% endif %}">
+          <div 
+            class="confidence-fill {% if label == 'Phishing' %}danger-fill{% endif %}" 
+            id="confidenceFill">
+          </div>
+        </div>
+
+        <div class="confidence" id="confidenceValue">{{ confidence }}%</div>
+      </div>
+
+      <!-- Hidden Data for JS -->
+      <input type="hidden" id="confidenceData" value="{{ confidence }}">
+
+      <div class="recommendation {{ 'danger-recommendation' if label == 'Phishing' }}">
+        {% if label == 'Phishing' %}
+          <div class="recommendation-header">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <span>Security Recommendation</span>
+          </div>
+          <p><strong>Do not visit this URL.</strong> It may attempt to steal your personal or financial information.</p>
+        {% else %}
+          <div class="recommendation-header">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="16" x2="12" y2="12"/>
+              <line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+            <span>Recommendation</span>
+          </div>
+          <p>This URL passed the security checks. However, always verify the domain name and look for HTTPS before entering any information.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <a href="/" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+        <span>Scan Another URL</span>
+      </a>
+      
+      <button class="share-btn" id="shareBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="18" cy="5" r="3"/>
+          <circle cx="6" cy="12" r="3"/>
+          <circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+        <span>Share Results</span>
+      </button>
+    </div>
+
+    <!-- Security Tips -->
+    <div class="tips-section">
+      <h3 class="tips-title">🔒 Security Tips</h3>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-icon">🔍</div>
+          <h4>Check the URL</h4>
+          <p>Always verify the domain name before entering sensitive information.</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">🔐</div>
+          <h4>Look for HTTPS</h4>
+          <p>Secure sites use HTTPS encryption to protect your data.</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">⚠️</div>
+          <h4>Trust Your Instincts</h4>
+          <p>If something feels suspicious, it probably is.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>Powered by Machine Learning & Flask</p>
+      <p class="footer-links">
+        <a href="#about">About</a> • 
+        <a href="#privacy">Privacy</a> • 
+        <a href="#api">API</a>
+      </p>
+    </footer>
+  </div>
+
+  <script src="/static/script.js"></script>
+  <script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const sunIcon = document.querySelector('.sun-icon');
+    const moonIcon = document.querySelector('.moon-icon');
+    const html = document.documentElement;
+
+    const currentTheme = localStorage.getItem('theme') || 'dark';
+    html.setAttribute('data-theme', currentTheme);
+    updateThemeIcon(currentTheme);
+
+    themeToggle.addEventListener('click', () => {
+      const theme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      updateThemeIcon(theme);
+    });
+
+    function updateThemeIcon(theme) {
+      if (theme === 'dark') {
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+      } else {
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+      }
+    }
+
+    // Share Button
+    const shareBtn = document.getElementById('shareBtn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', async () => {
+        const url = "{{ url }}";
+        const result = "{{ label }}";
+        
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: 'Phishing Scan Results',
+              text: `URL: ${url}\nResult: ${result}`,
+              url: window.location.href
+            });
+          } catch (err) {
+            console.log('Error sharing:', err);
+          }
+        } else {
+          navigator.clipboard.writeText(window.location.href);
+          shareBtn.innerHTML = '<span>✓ Link Copied!</span>';
+          setTimeout(() => {
+            shareBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share Results</span>';
+          }, 2000);
+        }
+      });
+    }
+
+    // Confidence Bar Animation
+    document.addEventListener("DOMContentLoaded", () => {
+      const confidenceInput = document.getElementById("confidenceData");
+      const confidenceFill = document.getElementById("confidenceFill");
+      const confidenceValue = document.getElementById("confidenceValue");
+
+      if (confidenceInput && confidenceFill) {
+        let confidence = parseFloat(confidenceInput.value) || 0;
+        confidence = Math.min(100, Math.max(0, confidence));
+
+        requestAnimationFrame(() => {
+          confidenceFill.style.transition = "width 0.8s ease";
+          confidenceFill.style.width = confidence + "%";
+        });
+
+        if (confidenceValue) confidenceValue.textContent = confidence.toFixed(2) + "%";
+      }
+    });
+  </script>
+</body>
+</html>
